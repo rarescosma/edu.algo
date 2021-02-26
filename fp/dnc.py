@@ -1,4 +1,4 @@
-"""DnC abstractions."""
+"""DnC abstraction."""
 import abc
 import itertools
 from operator import add
@@ -17,9 +17,9 @@ class SupportsMerge(Generic[A], metaclass=abc.ABCMeta):
 
 
 def divide_and_conquer(
-    xs: List[_T],
+    ys: List[_T],
     starmap: Callable = itertools.starmap,
 ) -> List[_T]:
-    while len(xs) > 1:
-        xs = list(starmap(add, grouper(xs, 2)))
-    return xs
+    while len(ys) > 1:
+        ys = list(starmap(add, grouper(ys, 2)))
+    return ys
