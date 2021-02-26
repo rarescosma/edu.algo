@@ -1,4 +1,4 @@
-"""Unit tests covering dnc + merge_sort."""
+"""Unit tests covering dnc + MergeSort."""
 import random
 from multiprocessing import Pool as ProcPool
 from multiprocessing.dummy import Pool
@@ -10,7 +10,7 @@ from hypothesis import given
 from hypothesis.strategies import floats, integers, lists, one_of, text
 
 from .dnc import divide_and_conquer
-from .merge_sort import SortList
+from .merge_sort import MergeSort
 
 
 @given(
@@ -21,7 +21,7 @@ from .merge_sort import SortList
     )
 )
 def test_merge_sort(input_arr: list) -> None:
-    s_lists = [SortList.unit(_) for _ in input_arr]
+    s_lists = [MergeSort.pure(_) for _ in input_arr]
     _sorted = divide_and_conquer(s_lists)
     if _sorted:
         assert _sorted[0].values == sorted(input_arr[:])
@@ -35,7 +35,7 @@ def test_merge_sort(input_arr: list) -> None:
     )
 )
 def test_parallel_merge_sort(input_arr: list) -> None:
-    s_lists = [SortList.unit(_) for _ in input_arr]
+    s_lists = [MergeSort.pure(_) for _ in input_arr]
     with Pool() as pool:
         _sorted = divide_and_conquer(s_lists, starmap=pool.starmap)
         if _sorted:
@@ -47,7 +47,7 @@ def test_sortlist(input_arr: List[int]) -> None:
     _pivot = len(input_arr) // 2
     a, b = sorted(input_arr[:_pivot]), sorted(input_arr[_pivot:])
 
-    left, right = SortList(a), SortList(b)
+    left, right = MergeSort(a), MergeSort(b)
 
     assert (left + right).values == sorted([*a, *b])
 
@@ -56,7 +56,7 @@ def test_sortlist(input_arr: List[int]) -> None:
 def test_speedup() -> None:
     _size = 200
     input_arr = random.sample(range(1, 100000000), _size)
-    input_s = [SortList.unit(_) for _ in input_arr]
+    input_s = [MergeSort.pure(_) for _ in input_arr]
 
     start_time = time()
     divide_and_conquer(input_s)

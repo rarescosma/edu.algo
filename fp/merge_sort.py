@@ -1,32 +1,35 @@
 """
-Concrete use case of the DnC primitives.
+Concrete use case of the DnC primitive:
+
+MergeSort - we receive two sub-arrays from the recursive step
+and perform the merge step using __add__.
 """
 from dataclasses import dataclass, replace
 from typing import Generic, List, Optional, TypeVar
 
 from .dnc import SupportsMerge
 
-C = TypeVar("C")
+X = TypeVar("X")
 
 
 @dataclass(frozen=True)
-class SortList(SupportsMerge["SortList"], Generic[C]):
-    values: List[C]
+class MergeSort(SupportsMerge["MergeSort"], Generic[X]):
+    values: List[X]
 
     @classmethod
-    def unit(cls, x: C) -> "SortList[C]":
+    def pure(cls, x: X) -> "MergeSort[X]":
         return cls([x])
 
     def __len__(self) -> int:
         return len(self.values)
 
-    def __add__(self, other: Optional["SortList"] = None) -> "SortList":
+    def __add__(self, other: Optional["MergeSort"] = None) -> "MergeSort":
         if other is None:
             return self
 
         i, j, i_max, j_max = 0, 0, len(self), len(other)
 
-        output: List[C] = []
+        output: List[X] = []
         while i < i_max and j < j_max:
             if self.values[i] < other.values[j]:
                 output.append(self.values[i])
