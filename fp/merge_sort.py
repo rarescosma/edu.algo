@@ -31,7 +31,7 @@ class MergeSort(SupportsMerge["MergeSort"], Generic[X]):
 
         output: List[X] = []
         while i < i_max and j < j_max:
-            if self.values[i] < other.values[j]:
+            if self.values[i] <= other.values[j]:
                 output.append(self.values[i])
                 i += 1
             else:

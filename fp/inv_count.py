@@ -30,7 +30,7 @@ class InvCount(SupportsMerge["InvCount"], Generic[X]):
         output: List[X] = []
         inv_count = 0
         while i < i_max and j < j_max:
-            if self.values[i] < other.values[j]:
+            if self.values[i] <= other.values[j]:
                 # boring case, we've copied from the left sub-array
                 output.append(self.values[i])
                 i += 1
