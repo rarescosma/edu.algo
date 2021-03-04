@@ -5,10 +5,6 @@ import math
 from itertools import permutations
 from typing import Iterable, NamedTuple, Optional, Sequence, Tuple, cast
 
-import pytest
-from hypothesis import given
-from hypothesis.strategies import floats, lists
-
 
 # pylint: disable=inherit-non-class
 class Point(NamedTuple):
@@ -86,25 +82,3 @@ def closest_pair(points: Sequence[Point]) -> Pair:
 
 def brute(points: Iterable[Point]) -> Pair:
     return _best_of(*cast(list[Pair], permutations(points, r=2)))
-
-
-@given(
-    lists(
-        floats(
-            allow_nan=False,
-            allow_infinity=False,
-            max_value=10,
-            min_value=-10,
-        ),
-        min_size=100,
-        unique=True,
-    )
-)
-def test_closest_pair(coord_space: list[float]) -> None:
-    points = [
-        Point(coord_space[i], coord_space[i + 1])
-        for i in range(0, len(coord_space) - 1, 2)
-    ]
-    assert _distance(closest_pair(points)) == pytest.approx(
-        _distance(brute(points))
-    )
