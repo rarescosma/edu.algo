@@ -39,7 +39,7 @@ def _closest_split_pair(
     len_s_y, best, best_pair = len(s_y), delta, None
 
     for i in range(0, len_s_y):
-        for j in range(1, min(7, len_s_y - i)):  # friggin' insane!
+        for j in range(1, min(8, len_s_y - i)):  # friggin' insane!
             pair = s_y[i], s_y[i + j]
             if (d := _distance(pair)) < best:
                 best, best_pair = d, pair
