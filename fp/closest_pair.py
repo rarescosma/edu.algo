@@ -6,7 +6,6 @@ from itertools import permutations
 from typing import Iterable, NamedTuple, Optional, Sequence, Tuple, cast
 
 
-# pylint: disable=inherit-non-class
 class Point(NamedTuple):
     x: float
     y: float
@@ -19,6 +18,9 @@ def _distance(pair: Pair) -> float:
     """Note: for the sake of our problem we don't need to
     find the actual distance, just the closest pair
     so we can skip taking the square root.
+
+    Note: this is probably also a BAD IDEA since it will
+    overflow.
     """
     p, q = pair
     return (p.x - q.x) ** 2 + (p.y - q.y) ** 2
@@ -33,13 +35,16 @@ def _closest_split_pair(
     p_y: Sequence[Point],
     delta: float,
 ) -> Optional[Pair]:
+    # take a strip of width delta around the median X
     x_bar = p_x[len(p_x) // 2].x
     s_y = [_ for _ in p_y if abs(_.x - x_bar) <= delta]
 
     len_s_y, best, best_pair = len(s_y), delta, None
 
+    # for each point in the strip look at max 7 points
+    # ahead (WTF - this is where sparsity proof comes in)
     for i in range(0, len_s_y):
-        for j in range(1, min(8, len_s_y - i)):  # friggin' insane!
+        for j in range(1, min(7, len_s_y - i)):
             pair = s_y[i], s_y[i + j]
             if (d := _distance(pair)) < best:
                 best, best_pair = d, pair
@@ -50,11 +55,11 @@ def _closest_pair(p_x: Sequence[Point], p_y: Sequence[Point]) -> Pair:
     if (len_x := len(p_x)) <= 3 and len(p_y) <= 3:
         return brute({*p_x, *p_y})
 
-    # split into left & right halves
+    # split into left & right halves (by X)
     mid = len_x // 2
     q_x, r_x = p_x[:mid], p_x[mid:]
 
-    # gotcha!
+    # do the same for Y-sorted arrays (by X again!)
     x_mid, q_y, r_y = p_x[mid].x, [], []
     for _ in p_y:
         if _.x <= x_mid:
