@@ -3,7 +3,9 @@ find the closest pair of points (by their Euclidean distance).
 """
 import math
 from itertools import permutations
-from typing import Iterable, NamedTuple, Optional, Sequence, Tuple, cast
+from typing import Iterable, NamedTuple, Sequence, Tuple, cast
+
+from more_itertools import partition
 
 
 class Point(NamedTuple):
@@ -11,6 +13,7 @@ class Point(NamedTuple):
     y: float
 
 
+Points = Sequence[Point]
 Pair = Tuple[Point, Point]
 
 
@@ -22,19 +25,15 @@ def _best_of(*pairs: Pair) -> Pair:
     return min(pairs, key=_distance)
 
 
-def _closest_split_pair(
-    p_x: Sequence[Point],
-    p_y: Sequence[Point],
-    delta: float,
-) -> Optional[Pair]:
+def _closest_split_pair(p_y: Points, x_bar: float, delta_pair: Pair) -> Pair:
     # take a strip of width delta around the median X
-    x_bar = p_x[len(p_x) // 2].x
+    delta = _distance(delta_pair)
     s_y = [_ for _ in p_y if abs(_.x - x_bar) <= delta]
 
-    len_s_y, best, best_pair = len(s_y), delta, None
+    len_s_y, best, best_pair = len(s_y), delta, delta_pair
 
     # for each point in the strip look at max 7 points
-    # ahead (WTF - this is where sparsity proof comes in)
+    # ahead (WTF?! - this is where the sparsity proof comes in)
     for i in range(0, len_s_y):
         for j in range(1, min(7, len_s_y - i)):
             pair = s_y[i], s_y[i + j]
@@ -43,38 +42,30 @@ def _closest_split_pair(
     return best_pair
 
 
-def _closest_pair(p_x: Sequence[Point], p_y: Sequence[Point]) -> Pair:
+def _closest_pair(p_x: Points, p_y: Points) -> Pair:
     if (len_x := len(p_x)) <= 3 and len(p_y) <= 3:
         return brute({*p_x, *p_y})
 
-    # split into left & right halves (by X)
+    # partition the X-sorted array around median X
     mid = len_x // 2
-    q_x, r_x = p_x[:mid], p_x[mid:]
+    q_x, r_x, x_bar = p_x[:mid], p_x[mid:], p_x[mid].x
 
-    # do the same for Y-sorted arrays (by X again!)
-    x_mid, q_y, r_y = p_x[mid].x, [], []
-    for _ in p_y:
-        if _.x <= x_mid:
-            q_y.append(_)
-        else:
-            r_y.append(_)
+    # partition the Y-sorted array (around median X again!)
+    _qr = partition(lambda _: _.x > x_bar, p_y)
+    q_y, r_y = list(_qr[0]), list(_qr[1])
 
     delta_pair = _best_of(
         _closest_pair(q_x, q_y),
         _closest_pair(r_x, r_y),
     )
-    s_pair = _closest_split_pair(
-        p_x,
-        p_y,
-        delta=math.sqrt(_distance(delta_pair)),
+    return _closest_split_pair(p_y, x_bar, delta_pair)
+
+
+def closest_pair(points: Points) -> Pair:
+    return _closest_pair(
+        sorted(points, key=lambda _: _.x),
+        sorted(points, key=lambda _: _.y),
     )
-    return delta_pair if s_pair is None else _best_of(delta_pair, s_pair)
-
-
-def closest_pair(points: Sequence[Point]) -> Pair:
-    p_x = sorted(points, key=lambda p: p.x)
-    p_y = sorted(points, key=lambda p: p.y)
-    return _closest_pair(p_x, p_y)
 
 
 def brute(points: Iterable[Point]) -> Pair:
