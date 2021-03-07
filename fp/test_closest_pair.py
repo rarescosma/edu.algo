@@ -11,10 +11,11 @@ from .closest_pair import Point, _distance, brute, closest_pair
         floats(
             allow_nan=False,
             allow_infinity=False,
-            max_value=10,
-            min_value=-10,
+            max_value=10000,
+            min_value=-10000,
         ),
-        min_size=100,
+        min_size=32,
+        max_size=128,
         unique=True,
     )
 )
