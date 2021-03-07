@@ -15,15 +15,7 @@ Pair = Tuple[Point, Point]
 
 
 def _distance(pair: Pair) -> float:
-    """Note: for the sake of our problem we don't need to
-    find the actual distance, just the closest pair
-    so we can skip taking the square root.
-
-    Note: this is probably also a BAD IDEA since it will
-    overflow.
-    """
-    p, q = pair
-    return (p.x - q.x) ** 2 + (p.y - q.y) ** 2
+    return math.dist(*pair)
 
 
 def _best_of(*pairs: Pair) -> Pair:
