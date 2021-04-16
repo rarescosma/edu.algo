@@ -7,7 +7,7 @@ and perform the merge step using __add__.
 from dataclasses import dataclass, replace
 from typing import Generic, List, Optional, TypeVar
 
-from .dnc import SupportsMerge
+from ...abstract.dnc import SupportsMerge
 
 X = TypeVar("X")
 

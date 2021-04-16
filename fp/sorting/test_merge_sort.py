@@ -9,7 +9,7 @@ import pytest
 from hypothesis import given
 from hypothesis.strategies import floats, integers, lists, one_of, text
 
-from .dnc import divide_and_conquer
+from ...abstract.dnc import divide_and_conquer
 from .merge_sort import MergeSort
 
 

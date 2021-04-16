@@ -2,7 +2,7 @@
 from hypothesis import given
 from hypothesis.strategies import integers, lists
 
-from fp.dnc import divide_and_conquer
+from abstract.dnc import divide_and_conquer
 from fp.inv_count import InvCount
 
 

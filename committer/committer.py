@@ -16,7 +16,7 @@ import sh
 from cached_property import cached_property
 from more_itertools import divide
 
-from .dnc import SupportsMerge, divide_and_conquer
+from ..abstract.dnc import SupportsMerge, divide_and_conquer
 
 ROWS = [
     "#### #  # #  # ###  ###   ##   ##",
@@ -137,4 +137,4 @@ def main() -> None:
         print("\n===> merge stage:")
         for _top in divide_and_conquer(targets, _pool.starmap):
             print(f"root ⬅💚 {_top.remote}")
-            _top.merge_into(Path("."), remove=True)
+            _top.merge_into(Path("../fp"), remove=True)

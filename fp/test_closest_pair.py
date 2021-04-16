@@ -1,29 +1,24 @@
 """Tests for closest_pair."""
+from operator import itemgetter
+
 import pytest
 from hypothesis import given
-from hypothesis.strategies import floats, lists
+from hypothesis.strategies import floats, lists, tuples
 
 from .closest_pair import Point, _distance, brute, closest_pair
 
 
 @given(
     lists(
-        floats(
-            allow_nan=False,
-            allow_infinity=False,
-            max_value=10000,
-            min_value=-10000,
+        tuples(
+            floats(allow_nan=False, max_value=10000, min_value=-10000),
+            floats(allow_nan=False, max_value=10000, min_value=-10000),
         ),
         min_size=32,
-        max_size=128,
-        unique=True,
+        unique_by=(itemgetter(0), itemgetter(1)),
     )
 )
-def test_closest_pair(coord_space: list[float]) -> None:
-    points = [
-        Point(coord_space[i], coord_space[i + 1])
-        for i in range(0, len(coord_space) - 1, 2)
-    ]
-    assert _distance(closest_pair(points)) == pytest.approx(
-        _distance(brute(points))
-    )
+def test_closest_pair(xys: list[tuple[float, float]]) -> None:
+    pts = [Point(*_) for _ in xys]
+
+    assert _distance(closest_pair(pts)) == pytest.approx(_distance(brute(pts)))
