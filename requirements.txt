@@ -1,3 +1,0 @@
-cached-property==1.5.2
-more-itertools==8.7.0
-sh==1.14.1

@@ -1,12 +1,12 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="fp",
-    version="0.0.1",
+    name="algo",
+    version="0.1.0",
     packages=[*find_packages(exclude=["tests", "tests.*"])],
     entry_points={
         "console_scripts": [
-            "committer = fp.committer:main",
+            "committer = algo.committer:main",
         ]
     },
     include_package_data=True,
