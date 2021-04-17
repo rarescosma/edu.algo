@@ -1,8 +1,10 @@
 """Common models for graph primitives."""
 import math
+from collections import defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
-from typing import Dict, Generic, List, Optional, Set, TypeVar
 from enum import Enum, auto
+from typing import Dict, Generic, List, Optional, Set, TypeVar, Tuple
 
 X = TypeVar("X")
 AdjacencyRow = List[X]
@@ -45,3 +47,18 @@ class Graph(Generic[X]):
             s, *adj = row
             _edges[s] = set(adj)
         return cls(vertices=_vertices, edges=_edges)
+
+    @classmethod
+    def from_edges(cls, edge_l: List[Tuple[X, X]]) -> Tuple["Graph", "Graph"]:
+        _vertices: Dict[X, Vertex[X]] = {}
+        _edges = defaultdict(set)
+        _rev_edges = defaultdict(set)
+        for u_name, v_name in edge_l:
+            _vertices[u_name] = Vertex(name=u_name)
+            _vertices[v_name] = Vertex(name=v_name)
+            _edges[u_name].add(v_name)
+            _rev_edges[v_name].add(u_name)
+        return (
+            cls(vertices=_vertices, edges=_edges),
+            cls(vertices=deepcopy(_vertices), edges=_rev_edges),
+        )
