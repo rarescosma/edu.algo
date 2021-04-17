@@ -2,12 +2,9 @@
 from collections import defaultdict
 from pathlib import Path
 
-import pytest
-
 from .dijkstra import Edge, Graph, dijsktra_heap, dijsktra_naive
 
 
-@pytest.mark.wip
 def test_dijsktra() -> None:
     rows = [
         _.split()
