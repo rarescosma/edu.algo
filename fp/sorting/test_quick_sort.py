@@ -15,7 +15,6 @@ from .quick_sort import quicksort
         lists(text()),
     )
 )
-@pytest.mark.wip
 def test_quick_sort(input_arr: list) -> None:
     _copy = deepcopy(input_arr)
     quicksort(_copy)
