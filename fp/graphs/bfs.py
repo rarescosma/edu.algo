@@ -3,34 +3,36 @@
 from collections import deque
 from typing import Iterable
 
-from ._types import Graph, X
+from devtools import debug
+
+from fp.graphs._types import Graph, X, Color
 
 
 def bfs(g: Graph, s_name: X) -> None:
     s = g.vertices[s_name]
-    s.explored = True
+    s.color = Color.BLACK
     s.dist = 0
-    s.component = s_name
+    s.leader = s_name
 
     q = deque([s_name])
     while q:
         v = g.vertices[q.popleft()]
         for w_name in g.edges[v.name]:
-            if not (w := g.vertices[w_name]).explored:
-                w.explored = True
+            if not (w := g.vertices[w_name]).seen:
+                w.color = Color.BLACK
                 w.dist = v.dist + 1
-                w.component = s_name
+                w.leader = s_name
                 q.append(w_name)
 
 
 def connected_comps(g: Graph) -> Iterable[Graph]:
     for v in g.vertices.values():
-        if not v.explored:
+        if not v.seen:
             bfs(g, v.name)
 
-    comps = {_.component for _ in g.vertices.values()}
+    comps = {_.leader for _ in g.vertices.values()}
     for comp in sorted(comps):
-        vertices = {k: v for k, v in g.vertices.items() if v.component == comp}
+        vertices = {k: v for k, v in g.vertices.items() if v.leader == comp}
         yield Graph(
             vertices=vertices,
             edges={v: adj for v, adj in g.edges.items() if v in vertices},

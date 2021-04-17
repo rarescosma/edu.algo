@@ -2,18 +2,28 @@
 import math
 from dataclasses import dataclass
 from typing import Dict, Generic, List, Optional, Set, TypeVar
+from enum import Enum, auto
 
 X = TypeVar("X")
 AdjacencyRow = List[X]
 
 
+class Color(Enum):
+    WHITE = auto()
+    GRAY = auto()
+    BLACK = auto()
+
+
 @dataclass
 class Vertex(Generic[X]):
     name: X
-    explored: bool = False
+    color: Color = Color.WHITE
     dist: float = math.inf
-    component: Optional[X] = None
-    topo: int = -1
+    leader: Optional[X] = None
+
+    @property
+    def seen(self) -> bool:
+        return self.color != Color.WHITE
 
 
 Adjacency = Set[Vertex]
