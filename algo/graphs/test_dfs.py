@@ -1,6 +1,6 @@
 import pytest
 
-from fp.graphs._types import Graph
+from ._types import Graph
 
 EXPECTED_SCCS = [434821, 968, 459, 313, 211]
 

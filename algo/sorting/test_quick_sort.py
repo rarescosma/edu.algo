@@ -1,7 +1,6 @@
 """Unit tests covering QuickSort"""
 from copy import deepcopy
 
-import pytest
 from hypothesis import given
 from hypothesis.strategies import floats, integers, lists, one_of, text
 

@@ -2,7 +2,7 @@
 from hypothesis import given
 from hypothesis.strategies import integers
 
-from fp.karatsuba import karatsuba_mul
+from .karatsuba import karatsuba_mul
 
 
 @given(integers(min_value=1), integers(min_value=1))

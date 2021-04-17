@@ -5,7 +5,7 @@ from typing import Iterable
 
 from devtools import debug
 
-from fp.graphs._types import Graph, X, Color
+from ._types import Color, Graph, X
 
 
 def bfs(g: Graph, s_name: X) -> None:

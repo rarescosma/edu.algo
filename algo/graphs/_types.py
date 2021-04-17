@@ -4,7 +4,7 @@ from collections import defaultdict
 from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Dict, Generic, List, Optional, Set, TypeVar, Tuple
+from typing import Dict, Generic, List, Optional, Set, Tuple, TypeVar
 
 X = TypeVar("X")
 AdjacencyRow = List[X]

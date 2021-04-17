@@ -2,8 +2,8 @@
 from hypothesis import given
 from hypothesis.strategies import integers, lists
 
-from abstract.dnc import divide_and_conquer
-from fp.inv_count import InvCount
+from .abstract.dnc import divide_and_conquer
+from .inv_count import InvCount
 
 
 def _brute(arr: list) -> int:
