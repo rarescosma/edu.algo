@@ -50,9 +50,10 @@ if __name__ == "__main__":
         ["f"],
     ]
     _graph = Graph.from_adj_l(_adj_l)
-    print(_graph)
+    debug(_graph)
 
     _comps = list(connected_comps(_graph))
-    print(len(_comps))
-    assert all(v.explored for v in _graph.vertices.values())
-    print(_comps)
+    debug(len(_comps))
+
+    assert all(v.seen for v in _graph.vertices.values())
+    debug(_comps)
