@@ -1,3 +1,4 @@
+"""Tests for DFS."""
 import pytest
 
 from ._types import Graph
@@ -6,7 +7,7 @@ EXPECTED_SCCS = [434821, 968, 459, 313, 211]
 
 
 @pytest.fixture
-def simple_digraph():
+def simple_digraph() -> Graph[str]:
     """
     a -> c -> e
     ^    ^    ^

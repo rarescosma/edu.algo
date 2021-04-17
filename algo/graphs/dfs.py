@@ -6,7 +6,7 @@ TODO: tests
 """
 from collections import defaultdict, deque
 from pathlib import Path
-from typing import Deque, Dict, List, Optional
+from typing import Callable, Deque, Dict, List, Optional, cast
 
 from devtools import debug
 
@@ -37,9 +37,9 @@ def dfs(
     return fin
 
 
-def topo_ord(g: Graph) -> Deque[X]:
+def topo_ord(g: Graph[X]) -> Deque[X]:
     """Return the node names of G in their topological ordering."""
-    q = deque()
+    q: Deque[X] = deque()
     for v in g.vertices.values():
         if not v.seen:
             q.extend(dfs(g, v.name, return_fin=True))
@@ -47,7 +47,7 @@ def topo_ord(g: Graph) -> Deque[X]:
 
 
 def find_sccs(
-    g: Graph, g_rev: Graph, top_k: Optional[int] = None
+    g: Graph[X], g_rev: Graph[X], top_k: Optional[int] = None
 ) -> Dict[X, int]:
     _topo_ord = topo_ord(g_rev)
 
@@ -56,24 +56,25 @@ def find_sccs(
         if not v.seen:
             dfs(g, v.name, leader=v.name)
 
-    sccs = defaultdict(int)
+    sccs: Dict[X, int] = defaultdict(int)
     for v in g.vertices.values():
         assert v.leader is not None
         sccs[v.leader] += 1
 
     if top_k is None:
         return sccs
-    return {_: sccs[_] for _ in sorted(sccs, key=sccs.get)[:top_k]}
+    _key = cast(Callable, sccs.get)  # stfu mypy
+    return {_: sccs[_] for _ in sorted(sccs, key=_key)[:top_k]}
 
 
 if __name__ == "__main__":
-    lines = [
-        _
+    rows = [
+        _.split()
         for _ in (Path(__file__).parent / "../../data/scc_small.txt")
         .read_text()
         .splitlines()
         if _
     ]
-    edges = [tuple(int(_) for _ in line.split()) for line in lines]
+    edges = [(int(row[0]), int(row[1])) for row in rows]
     _g, _g_rev = Graph[int].from_edges(edges)
     debug(find_sccs(_g_rev, _g))
