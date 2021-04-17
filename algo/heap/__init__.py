@@ -1,7 +1,18 @@
 """Generic heap."""
 import abc
-from dataclasses import dataclass
-from typing import Any, Generic, Iterable, List, Protocol, Tuple, TypeVar, Union
+from dataclasses import dataclass, field
+from typing import (
+    Any,
+    Dict,
+    Generic,
+    Hashable,
+    Iterable,
+    List,
+    Protocol,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 
 class SupportsLessThanEq(Protocol):
@@ -9,38 +20,44 @@ class SupportsLessThanEq(Protocol):
         ...
 
 
-class Keyed(Protocol):
+class El(Protocol):
+    @property
+    @abc.abstractmethod
+    def name(self) -> Hashable:
+        ...
+
     @property
     @abc.abstractmethod
     def key(self) -> SupportsLessThanEq:
         ...
 
 
-X = TypeVar("X", bound=Keyed)
+X = TypeVar("X", bound=El)
 
 
 @dataclass
 class Heap(Generic[X]):
-    _arr: list[X]
+    _arr: list[X] = field(default_factory=list)
+    _pos: Dict[Hashable, int] = field(default_factory=dict)
 
     @classmethod
     def from_iterable(cls, xs: Iterable[X]) -> "Heap[X]":
-        _it = iter(xs)
-        root = cls(_arr=[next(_it)])
-        for x in _it:
-            root.insert(x)
-        return root
+        _heap = cls()
+        for x in xs:
+            _heap.insert(x)
+        return _heap
 
     @classmethod
     def from_raw(cls, xs: list[X]) -> "Heap[X]":
-        return cls(_arr=xs[:])
+        _arr = xs[:]
+        return cls(_arr=_arr, _pos={v: k for k, v in enumerate(_arr)})
 
     def __bool__(self) -> bool:
         return bool(self._arr)
 
     @staticmethod
     def parent(i: int) -> int:
-        _res = i >> 1
+        _res = i // 2
         return _res if i % 2 else _res - 1
 
     @staticmethod
@@ -49,7 +66,7 @@ class Heap(Generic[X]):
         return _db - 1, _db
 
     def insert(self, x: X) -> None:
-        _next_leaf = len(self._arr)
+        self._pos[x.name] = _next_leaf = len(self._arr)
         self._arr.append(x)
 
         # Keep heap invariant -> bubble-up
@@ -57,20 +74,28 @@ class Heap(Generic[X]):
 
     def extract_min(self) -> X:
         self._swap(0, -1)
-        root = self._arr.pop()
+        root = self._poplast()
         self._bubble_down()
         return root
 
-    def delete(self, x: X) -> None:
-        _ind, _last = self._arr.index(x), self._arr[-1]
+    def delete(self, x_name: Hashable) -> X:
+        _ind, _replace = self._pos[x_name], self._arr[-1]
         self._swap(_ind, -1)
-        self._arr.pop()
+        ret = self._poplast()
 
-        _parent = self.parent(_ind)
-        if _last.key <= self._arr[_parent].key:
+        # if we deleted the root => invariably bubble down
+        if _ind == 0:
+            self._bubble_down()
+            return ret
+
+        if _replace.key <= self._arr[self.parent(_ind)].key:
+            # replacement smaller than its parent => bubble up
             self._bubble_up(_ind)
         else:
+            # replacement greater than its parent => bubble down
             self._bubble_down(_ind)
+
+        return ret
 
     def _bubble_up(self, leaf: int, up_to: int = 0) -> None:
         # we've reached the root
@@ -108,8 +133,16 @@ class Heap(Generic[X]):
         self._swap(down_from, swap_with)
         self._bubble_down(swap_with)
 
+    def _poplast(self) -> X:
+        _ret = self._arr.pop()
+        del self._pos[_ret.name]
+        return _ret
+
     def _swap(self, i: int, j: int) -> None:
-        self._arr[i], self._arr[j] = self._arr[j], self._arr[i]
+        i_el, j_el = self._arr[i], self._arr[j]
+        self._pos[i_el.name] = j
+        self._pos[j_el.name] = i
+        self._arr[i], self._arr[j] = j_el, i_el
 
     def _children(self, i: int) -> List[int]:
         return [_ for _ in self.children(i) if _ < len(self._arr)]

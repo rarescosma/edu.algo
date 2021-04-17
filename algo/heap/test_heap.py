@@ -12,6 +12,10 @@ from . import Heap
 class KInt(NamedTuple):
     key: int
 
+    @property
+    def name(self) -> int:
+        return self.key
+
 
 @pytest.mark.wip
 @given(lists(integers(), min_size=8, max_size=128, unique=True))
@@ -32,8 +36,7 @@ def test_heap_delete(ints: list[int]) -> None:
     heap = Heap[KInt].from_iterable([KInt(_) for _ in ints])
 
     j = randrange(0, len(ints))
-    deleted = _sorted.pop(j)
-    heap.delete(KInt(deleted))
+    heap.delete(_sorted.pop(j))
 
     _mins = list()
     while heap:
