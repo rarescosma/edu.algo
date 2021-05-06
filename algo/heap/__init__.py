@@ -148,6 +148,9 @@ class Heap(Generic[X]):
         return [_ for _ in self.children(i) if _ < len(self._arr)]
 
     def as_dict(self, i: int = 0) -> Union[dict, X]:
+        if not self._arr:
+            return {}
+
         _children = self._children(i)
         _val = self._arr[i]
         if not _children:
