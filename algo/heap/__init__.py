@@ -55,6 +55,9 @@ class Heap(Generic[X]):
     def __bool__(self) -> bool:
         return bool(self._arr)
 
+    def __len__(self) -> int:
+        return len(self._arr)
+
     @staticmethod
     def parent(i: int) -> int:
         _res = i // 2
