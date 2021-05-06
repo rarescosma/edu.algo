@@ -8,7 +8,7 @@ from typing import (
     Hashable,
     Iterable,
     List,
-    Protocol,
+    Optional, Protocol,
     Tuple,
     TypeVar,
     Union,
@@ -74,6 +74,10 @@ class Heap(Generic[X]):
 
         # Keep heap invariant -> bubble-up
         self._bubble_up(_next_leaf)
+
+    @property
+    def root(self) -> Optional[X]:
+        return self._arr[0] if self._arr else None
 
     def extract_min(self) -> X:
         self._swap(0, -1)
