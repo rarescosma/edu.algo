@@ -1,20 +1,20 @@
 [tool.poetry]
 name = "algo"
-version = "0.1.0"
+version = "0.2.0"
 description = "supporting repo for coding up challenges from the Algo Coursera specialization"
 authors = ["Rareș Cosma <rares@getbetter.ro>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 cached-property = "^1.5"
-more-itertools = "^8.7"
+more-itertools = "^8.14"
 sh = "^1.14"
 
 [tool.poetry.dev-dependencies]
 devtools = "^0.6"
-pytest = "^6.2.3"
-hypothesis = "^6.10.0"
-ipython = "^7.22.0"
+pytest = "^7.2.0"
+hypothesis = "^6.61.0"
+ipython = "^7.34.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
